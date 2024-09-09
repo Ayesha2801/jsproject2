@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "SUSE", sans-serif;
+            background: linear-gradient(90deg, #c45a26, #984112, #7e3b0e, #511b05);
+        }
+
+        .search {
+            text-align: center;
+        }
+
+        #search-input {
+            width: 25%;
+            padding: 10px;
+            outline: none;
+        }
+
+        #search-button {
+            padding: 10px;
+            background-color: chocolate;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #search-button:hover {
+            background-color: #3e8e41;
+        }
+
+        #results {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1%;
+            position: relative;
+        }
+
+        .result {
+            width: 500px;
+            margin-top: 3rem;
+            font-size: 25px;
+        }
+
+        .result img {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 1px solid #000;
+        }
+
+        p {
+            font-size: 20px;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid chocolate;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: load 2s linear infinite;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+
+        @keyframes load {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search">
+        <h1>Search Engine</h1>
+        <input type="search" id="search-input" placeholder="Search for chocolate...">
+        <button id="search-button">Search</button>
+        <div id="results"></div>
+        <div class="loader" id="loader"></div>
+    </div>
+    <script>
+        let chocolates = [
+            {
+                name: "Bar One", brand: "Amul", image: "bar-one.jfif", rating: 4.2,
+                reviews: [
+                    "A classic Cadbury chocolate, creamy and sweet! - Emily"
+                ]
+            },
+            {
+                name: "Bournville", brand: "Cadbury", image: "bournville.jfif", rating: 4.0,
+                reviews: [
+                    "Smooth and creamy dark chocolate, perfect for those who like it less sweet! - Sophia"
+                ]
+            },
+            {
+                name: "Dark Chocolate", brand: "Amul", image: "dark.jfif", rating: 4.3,
+                reviews: [
+                    "Rich and decadent, perfect for dark chocolate lovers! - Olivia"
+                ]
+            },
+            {
+                name: "Diary Milk", brand: "Cadbury", image: "diarymilk.jfif", rating: 4.1,
+                reviews: [
+                    "A delicious treat that's perfect for any time! - Sarah"
+                ]
+            },
+            {
+                name: "Fruit and Nuts", brand: "Amul", image: "amul.jfif", rating: 4.4,
+                reviews: [
+                    "Delicious mix of chocolate, fruits, and nuts, perfect snack! - Amelia"
+                ]
+            },
+            {
+                name: "Hersheys", brand: "Ghirardelli", image: "hersheys.jfif", rating: 3.8,
+                reviews: [
+                    "Classic American chocolate taste, creamy and sweet! - Isabella"
+                ]
+            },
+            {
+                name: "Kit Kat", brand: "Nestle", image: "kitkat.jfif", rating: 4.2,
+                reviews: [
+                    "Crunchy wafer and smooth chocolate, a perfect combo! - John"
+                ]
+            },
+            {
+                name: "Mars", brand: "Linndt", image: "mars.jfif", rating: 4.1,
+                reviews: [
+                    "Rich and creamy chocolate with a nice nougat center! - Olivia"
+                ]
+            },
+            {
+                name: "Nestle", brand: "Nestle", image: "nestle.jfif", rating: 4.0,
+                reviews: [
+                    "Smooth and creamy milk chocolate, perfect for snacking! - Sophia"
+                ]
+            },
+            {
+                name: "Nutties", brand: "Cadbury", image: "nutties.jfif", rating: 4.3,
+                reviews: [
+                    "Delicious mix of chocolate and nuts, perfect snack! - Amelia"
+                ]
+            },
+            {
+                name: "Snickers", brand: "Ghirardelli", image: "snickers.jfif", rating: 4.4,
+                reviews: [
+                    "Satisfies my hunger and sweet tooth, love it! - Evelyn"
+                ]
+            },
+            {
+                name: "Velvet", brand: "Amul", image: "velvet.jfif", rating: 4.2,
+                reviews: [
+                    "Smooth and creamy chocolate, perfect for those who like it less sweet! - Sophia"
+                ]
+            },
+        ];
+
+        function searchChoco(query) {
+            let results = chocolates.filter((chocolate) => {
+                return (
+                    chocolate.name.toLowerCase().includes(query.toLowerCase()) ||
+                    chocolate.brand.toLowerCase().includes(query.toLowerCase())
+                );
+            });
+            return results;
+        }
+
+        document.getElementById("search-button").addEventListener("click", () => {
+            let query = document.getElementById("search-input").value;
+            let loader = document.getElementById("loader");
+            loader.style.display = "block";
+            setTimeout(() => {
+                let results = searchChoco(query);
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = `<p>No results found for "${query}"</p>`;
+                } else {
+                    results.forEach((chocolate) => {
+                        let resultHTML = ` 
+                    <div class="result"> 
+                        <img src="${chocolate.image}" alt="${chocolate.name}"> 
+                        <p>${chocolate.name}</p> 
+                        <p><b>Rating:</b> ${chocolate.rating}/5</p>
+                        <p><b>Reviews:</b> ${chocolate.reviews.join(", ")}</p>
+                    </div>`;
+                        resultsDiv.innerHTML += resultHTML;
+                    });
+                }
+                loader.style.display = "none";
+            }, 2000);
+        });
+
+        window.onload = function () {
+            let resultsDiv = document.getElementById("results");
+            chocolates.forEach((chocolate) => {
+                let resultHTML = `
+                <div class="result">
+                    <img src="${chocolate.image}" alt="${chocolate.name}">
+                    <p>${chocolate.name} (${chocolate.brand})</p>
+                    <p><b>Rating:</b> ${chocolate.rating}/5</p>
+                    <p><b>Reviews:</b> ${chocolate.reviews.join(", ")}</p>
+                </div>`;
+                resultsDiv.innerHTML += resultHTML;
+            });
+        };
+    </script>
+</body>
+
+</html>
